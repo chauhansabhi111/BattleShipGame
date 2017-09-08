@@ -7,11 +7,10 @@ import com.mycompany.battelship.enums.BattleShipType;
 import com.mycompany.battelship.game.BattleShip;
 import com.mycompany.battelship.game.Player;
 import com.mycompany.battelship.pojo.Location;
+import com.mycompany.battelship.util.BattleShipUtil;
 
 public class TestBattleShipGame 
 {
-
-	
 	public static void main(String[] args) 
 	{
 		Player player1 = new Player(5,5,2);
@@ -59,28 +58,45 @@ public class TestBattleShipGame
 		player2.placeBattleShip(ship4);
 		
 		List<Location> player1TargeteLocations= new ArrayList<Location>();
+		player1TargeteLocations.add(new Location(0, 0));
 		player1TargeteLocations.add(new Location(1, 1));
-		player1TargeteLocations.add(new Location(2, 2));
-		player1TargeteLocations.add(new Location(2, 2));
-		player1TargeteLocations.add(new Location(3, 2));
+		player1TargeteLocations.add(new Location(1, 1));
+		player1TargeteLocations.add(new Location(2, 1));
 		
 		List<Location> player2TargeteLocations= new ArrayList<Location>();
+		player2TargeteLocations.add(new Location(0, 0));
 		player2TargeteLocations.add(new Location(1, 1));
 		player2TargeteLocations.add(new Location(2, 2));
+		player2TargeteLocations.add(new Location(0, 0));
+		player2TargeteLocations.add(new Location(3, 0));
+		player2TargeteLocations.add(new Location(4, 0));
 		player2TargeteLocations.add(new Location(3, 3));
-		player2TargeteLocations.add(new Location(1, 1));
-		player2TargeteLocations.add(new Location(4, 1));
-		player2TargeteLocations.add(new Location(5, 1));
 		player2TargeteLocations.add(new Location(4, 4));
-		player2TargeteLocations.add(new Location(5, 5));
-		player2TargeteLocations.add(new Location(5, 5));
+		player2TargeteLocations.add(new Location(4, 4));
 		
 		player1.setTargetLocations(player1TargeteLocations);
+		player1.setPlayerName("Player1");
+		player2.setPlayerName("Player2");
 		player2.setTargetLocations(player2TargeteLocations);
-		boolean isSuccess=player1.launchMissile(new Location(1,1),"Player1");
-		isSuccess=player2.launchMissile(new Location(1,1),"Player2");
-		isSuccess=player1.launchMissile(new Location(2,2),"Player1");
-		System.out.println(isSuccess);
+		Thread t1= new Thread(player1);
+		Thread t2= new Thread(player2);
+		t1.start();
+		try 
+		{
+			Thread.sleep(1000);
+		}
+		catch (InterruptedException e) 
+		{
+			e.printStackTrace();
+		}
+		t2.start();
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		BattleShipUtil.checkWinner(player1, player2);
 	}
 	
 }

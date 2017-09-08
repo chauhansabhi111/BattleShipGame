@@ -7,7 +7,7 @@ import com.mycompany.battelship.enums.BattleShipType;
 import com.mycompany.battelship.pojo.BattleShipPlacer;
 import com.mycompany.battelship.pojo.Location;
 
-public class Player
+public class Player implements Runnable
 {
 	private  int noOfBattleShip;
 	private  String playerName;
@@ -20,6 +20,10 @@ public class Player
 	}
 
 	private List<BattleShip> shipList;
+	public List<BattleShip> getShipList() {
+		return shipList;
+	}
+
 	private int playerBattleAreaWidth;
 	private List<Location> targetLocations;
 	private int playerBattleAreaHeight;
@@ -31,6 +35,14 @@ public class Player
 		this.playerBattleAreaWidth=width;
 		this.playerBattleAreaHeight=height;
 		this.playerBattleArea=new BattleShipPlacer[width][height];
+		for (int i = 0; i < playerBattleArea.length; i++) 
+		{
+			for (int j = 0; j < playerBattleArea.length; j++) 
+			{
+				BattleShipPlacer battleShipPlacer= new BattleShipPlacer(null,-1);
+				playerBattleArea[i][j]=battleShipPlacer;
+			}
+		}
 		this.noOfBattleShip=noOfBattleShip;
 		shipList= new ArrayList<BattleShip>(noOfBattleShip);
 	}
@@ -63,15 +75,16 @@ public class Player
 		if(battleShip!=null && battleShip.getShipHeight()<=playerBattleAreaHeight && battleShip.getShipWidth()<=playerBattleAreaWidth)
 		{
 			BattleShipType shipType= battleShip.getShipType();
-			if(shipType.toString().equals("P"))
+			if(shipType!=null && shipType.toString().equals("P"))
 				hitCount=2;
-			else if(shipType.toString().equals("Q"))
+			else if(shipType!=null && shipType.toString().equals("Q"))
 				hitCount=1;
-			for (int i = battleShip.getShipWidth(); i < playerBattleAreaWidth; i++) 
+			for (int i =0;i< battleShip.getShipWidth(); i++) 
 			{
-				for (int j = battleShip.getShipHeight(); j < playerBattleAreaHeight; j++) 
+				for (int j=0;j< battleShip.getShipHeight();j++) 
 				{
 					shipPlacer= new BattleShipPlacer(shipType.toString(),hitCount);
+					System.out.println("Placing ship with type "+shipPlacer.getShipType().toString());
 					playerBattleArea [i][j]=shipPlacer;
 				}
 			}
@@ -87,40 +100,52 @@ public class Player
 	{
 		boolean isSuccessfulHit=false;
 		BattleShipPlacer shipPlacer= null;
-	/*	if(shipList.size()==0)
-		{
-			System.out.println("Battleship has been destroyed so ending game");
-			return isSuccessfulHit;
-		}*/
 		if(targetLocation!=null && targetLocation.getyCoOrdianate()<playerBattleAreaHeight && targetLocation.getxCoOrdianate()<playerBattleAreaWidth)
 		{
 			shipPlacer=playerBattleArea [targetLocation.getxCoOrdianate()][targetLocation.getyCoOrdianate()];
-			if(shipPlacer!=null && shipPlacer.getHitCount()>0)
+			int hitCount=shipPlacer.getHitCount();
+			if(shipPlacer!=null && hitCount>0)
 			{
 				System.out.println(playerName+" fires a missile with target "+targetLocation.toString() +"which got hit");
-				shipPlacer.setHitCount((shipPlacer.getHitCount())-1);
+				shipPlacer.setHitCount(hitCount-1);
 				playerBattleArea[targetLocation.getxCoOrdianate()][targetLocation.getyCoOrdianate()]=shipPlacer;
 				isSuccessfulHit=true;
-				//shipList.remove(0);
+				if(hitCount==0)
+				{
+					shipList.remove(0);
+				}
 			}
 			else
 			{
-				System.out.println("Its a unsuccessful hit so  give chance to another player");
+				System.out.println(playerName+" fires a missile with target "+targetLocation.toString() +"which got miss");
 			}
 		}
 		return isSuccessfulHit;
 	}
 
-	/*@Override
-	public void run() 
+	@Override
+	public void run()
 	{
-		for (Location location : targetLocations) 
+		synchronized (this) 
 		{
-			boolean b=launchMissile(location,playerName);
-			if(b!=true)
+			for (Location location : targetLocations) 
 			{
-				
+				boolean result=launchMissile(location,playerName);
+				if(result)
+				{
+					continue;
+				}
+				else
+				{
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 			}
 		}
-	}*/
+	}
+
 }
