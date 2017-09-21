@@ -1,10 +1,6 @@
 package com.thoghtworks.battleship.pojo;
-/**
- * This class is used to represent location as x-Coordinate and y-Coordinate 
- * @author Abhishek
- *
- */
-public class Point {
+
+public class ShipPosition {
 	private int pointX;
 	private int pointY;
 	public int getPointX() {

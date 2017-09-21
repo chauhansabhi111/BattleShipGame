@@ -1,16 +1,10 @@
 package com.thoghtworks.battleship.pojo;
-/**
- * This class contains properties of battleship
- * @author Abhishek
- *
- */
+
 public class BattleShip {
 	private int height;
 	private int width;
-	private Point start;
 	private ShipType type;
-	public BattleShip(int height, int width, Point start, ShipType type) {
-		this.start = start;
+	public BattleShip(int height, int width, ShipType type) {
 		this.height = height;
 		this.width = width;
 		this.type = type;
@@ -32,11 +26,5 @@ public class BattleShip {
 	}
 	public void setType(ShipType type) {
 		this.type = type;
-	}
-	public Point getStart() {
-		return start;
-	}
-	public void setStart(Point start) {
-		this.start = start;
 	}
 }
